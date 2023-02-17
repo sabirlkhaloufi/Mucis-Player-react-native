@@ -10,7 +10,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.0.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.1.4",
     "@react-navigation/native-stack": "^6.9.10",

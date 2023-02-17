@@ -8,18 +8,20 @@ import {
 } from 'react-native';
 import React from 'react';
 
-const Home = () => {
+const Home = ({navigation}) => {
   return (
     <View style={styles.home}>
       <View style={styles.img}>
         <Image
           style={{width: 483, height: 483}}
-          source={require('./logo.png')}
+          source={require('./images/logo.png')}
         />
       </View>
-      <Image style={[styles.flow,{width: "100%", height: 483}]} source={require('./flow.png')}/>
+      <Image
+        style={[styles.flow, {width: '100%', height: 483}]}
+        source={require('./flow.png')}
+      />
       <View style={styles.getstarted}>
-        
         <Text style={[styles.text, {fontSize: 35, fontWeight: 'bold'}]}>
           Getting started
         </Text>
@@ -27,7 +29,9 @@ const Home = () => {
           Getting started Getting
         </Text>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Musics')}>
           <Text style={styles.textButton}>lets Go</Text>
         </TouchableOpacity>
       </View>
@@ -45,7 +49,7 @@ const styles = StyleSheet.create({
 
   getstarted: {
     alignItems: 'center',
-    marginTop:"-10%",
+    marginTop: '-10%',
   },
   text: {
     color: 'white',
@@ -65,8 +69,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 300,
   },
-  flow:{
-    position:'absolute',
-    bottom:0
-  }
+  flow: {
+    position: 'absolute',
+    bottom: 0,
+  },
 });
