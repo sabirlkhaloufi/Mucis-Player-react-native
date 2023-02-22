@@ -5,14 +5,61 @@ import {
   Image,
   ScrollView,
   Pressable,
+  Platform,
+  Alert,
+  PermissionsAndroid,
+  FlatList,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Search from '../components/Search';
+import MusicFiles from 'react-native-get-music-files';
+
+import RNFS from 'react-native-fs';
 
 const Musics = ({navigation}) => {
+  const requestFileSystemPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: 'File System Permission',
+          message:
+            'This app needs access to your file system to search for files',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('File system permission granted');
+        const path = RNFS.ExternalStorageDirectoryPath + '/Music/';
+        const files = await RNFS.readDir(path);
+        setaudioFiles(files);
+      } else {
+        console.log('File system permission denied');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [audioFiles, setaudioFiles] = useState(null);
+
+  const getSongs = () => {
+    try {
+      requestFileSystemPermission();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getSongs();
+  }, []);
+
+  console.log(JSON.stringify(audioFiles));
+
   return (
     <>
-     <Image
+      <Image
         style={styles.flowleft}
         source={require('./images/Ellipseleft.png')}
       />
@@ -83,222 +130,33 @@ const Musics = ({navigation}) => {
             <Text style={{color: 'white'}}>See All</Text>
           </View>
 
-          <ScrollView style={styles.musics}>
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
+          <ScrollView>
+            {audioFiles &&
+              audioFiles.map(audio => {
+                return (
+                  <Pressable
+                    style={styles.infoMusic}
+                    onPress={() => navigation.navigate('Player')}>
+                    <Image
+                      style={{width: 80, height: 80}}
+                      source={require('./images/img1.png')}
+                    />
 
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
-
-            <View style={styles.music}>
-              <Pressable
-                style={styles.infoMusic}
-                onPress={() => navigation.navigate('Player')}>
-                <Image
-                  style={{width: 80, height: 80}}
-                  source={require('./images/img1.png')}
-                />
-
-                <View style={styles.MusicText}>
-                  <Text style={[styles.MusicText1, {color: 'white'}]}>
-                    Antretor
-                  </Text>
-                  <Text
-                    style={[
-                      styles.MusicText2,
-                      {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
-                    ]}>
-                    yann tiarsen
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
+                    <View style={styles.MusicText}>
+                      <Text style={[styles.MusicText1, {color: 'white'}]}>
+                        {audio.name}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.MusicText2,
+                          {color: 'rgba(255, 255, 255, 0.4)', marginTop: '5%'},
+                        ]}>
+                        yann tiarsen
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
           </ScrollView>
         </View>
       </View>
@@ -306,7 +164,6 @@ const Musics = ({navigation}) => {
         style={styles.flowbottom}
         source={require('./images/flowbottom.png')}
       />
-     
     </>
   );
 };

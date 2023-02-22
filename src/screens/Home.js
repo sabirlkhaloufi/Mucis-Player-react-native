@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+
 
 const Home = ({navigation}) => {
   return (
@@ -33,6 +35,7 @@ const Home = ({navigation}) => {
           style={styles.button}
           onPress={() => navigation.navigate('Musics')}>
           <Text style={styles.textButton}>lets Go</Text>
+          <AntDesign style={{marginLeft:6}} name="right" color="white" size={18}/>
         </TouchableOpacity>
       </View>
     </View>
@@ -61,7 +64,9 @@ const styles = StyleSheet.create({
     width: 160,
     height: 50,
     borderRadius: 100,
-    justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent:"center",
+    flexDirection:"row"
   },
   textButton: {
     fontSize: 20,
