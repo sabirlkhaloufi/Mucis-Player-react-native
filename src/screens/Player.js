@@ -1,13 +1,71 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Slider,
+} from 'react-native';
+import React, {useEffect, useContext, useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
+import TrackPlayer, {
+  Event,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+} from 'react-native-track-player';
+import {StateGlobal} from '../Utils/StateProvider';
 
-const Player = () => {
+const Player = ({navigation, route}) => {
+  const {audioFiles} = useContext(StateGlobal);
+  const [id, setId] = useState(route.params.id);
+  const [play, setPlay] = useState(true);
+  const progress = useProgress();
+  const [sliderValue, setSliderValue] = useState(0);
+
+  useEffect(() => {
+    setSliderValue(progress.position);
+  }, [progress.position]);
+
+  const handleSliderValueChange = value => {
+    setSliderValue(value);
+    TrackPlayer.seekTo(value);
+  };
+
+  const getMusic = async () => {
+    audioFiles.forEach(async audio => {
+      await TrackPlayer.add(audio);
+    });
+  };
+
+  const PlayMusic = async () => {
+    await TrackPlayer.skip(id);
+    await TrackPlayer.play();
+  };
+
+  const pausePlayMusic = async () => {
+    if (play) {
+      await TrackPlayer.pause();
+      setPlay(false);
+    } else {
+      await TrackPlayer.play();
+      setPlay(true);
+    }
+  };
+
+  useEffect(async () => {
+    getMusic();
+    PlayMusic();
+  }, []);
   return (
     <>
-    <Image style={styles.imgBottom} source={require("./images/flowbottomplayer.png")}/>
+      <Image
+        style={styles.imgBottom}
+        source={require('./images/flowbottomplayer.png')}
+      />
       <View style={styles.player}>
         <View style={styles.topbar}>
           <View>
@@ -40,13 +98,20 @@ const Player = () => {
         </View>
 
         <View style={styles.Spectrum}>
-          <Image
-            source={require('./images/Spectrum.png')}
-            style={{width: 320, height: 60}}
+          <Slider
+            style={styles.progressBar}
+            minimumValue={0}
+            maximumValue={progress.duration}
+            value={sliderValue}
+            onValueChange={handleSliderValueChange}
+            minimumTrackTintColor="#7150D0"
+            maximumTrackTintColor="#444"
+            thumbTintColor="#7150D0"
           />
+
           <View style={styles.timer}>
-            <Text style={{color: 'rgba(123, 87, 228, 1)'}}>1:04</Text>
-            <Text style={{color: 'white'}}>3:29</Text>
+            {/* <Text style={{color: 'rgba(123, 87, 228, 1)'}}>1:04</Text>
+            <Text style={{color: 'white'}}>{progress.duration}</Text> */}
           </View>
         </View>
 
@@ -55,17 +120,23 @@ const Player = () => {
             <AntDesign name="reload1" color="#BAA8ED" size={23} />
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => TrackPlayer.skipToPrevious()}>
             <AntDesign name="stepbackward" color="#BAA8ED" size={23} />
           </TouchableOpacity>
 
-          <LinearGradient colors={["#7150D0", "#AE92FF"]} style={styles.playpause}>
-            <TouchableOpacity>
-            <AntDesign name="pause" color="#fff" size={40} />
+          <LinearGradient
+            colors={['#7150D0', '#AE92FF']}
+            style={styles.playpause}>
+            <TouchableOpacity onPress={() => pausePlayMusic()}>
+              {play ? (
+                <AntDesign name="pause" color="#fff" size={40} />
+              ) : (
+                <AntDesign name="play" color="#fff" size={40} />
+              )}
             </TouchableOpacity>
           </LinearGradient>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => TrackPlayer.skipToNext()}>
             <AntDesign name="stepforward" color="#BAA8ED" size={23} />
           </TouchableOpacity>
           <TouchableOpacity>
@@ -99,6 +170,7 @@ const styles = StyleSheet.create({
   },
   Spectrum: {
     marginTop: '5%',
+    width: '100%',
   },
   timer: {
     flexDirection: 'row',
@@ -113,15 +185,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   playpause: {
-    borderRadius:100,
-    padding:10
+    borderRadius: 100,
+    padding: 10,
     // width:100,
     // height:100
   },
-  imgBottom:{
-    position:"absolute",
-    left:0,
-    bottom:"-20%",
-    width:"100%"
-  }
+  imgBottom: {
+    position: 'absolute',
+    left: 0,
+    bottom: '-20%',
+    width: '100%',
+  },
 });

@@ -10,53 +10,23 @@ import {
   PermissionsAndroid,
   FlatList,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import Search from '../components/Search';
 import MusicFiles from 'react-native-get-music-files';
 
 import RNFS from 'react-native-fs';
+import {StateGlobal} from '../Utils/StateProvider';
+import TrackPlayer from 'react-native-track-player';
 
 const Musics = ({navigation}) => {
-  const requestFileSystemPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: 'File System Permission',
-          message:
-            'This app needs access to your file system to search for files',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('File system permission granted');
-        const path = RNFS.ExternalStorageDirectoryPath + '/Music/';
-        const files = await RNFS.readDir(path);
-        setaudioFiles(files);
-      } else {
-        console.log('File system permission denied');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const [audioFiles, setaudioFiles] = useState(null);
-
-  const getSongs = () => {
-    try {
-      requestFileSystemPermission();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const {requestFileSystemPermission, getSongs, audioFiles} =
+    useContext(StateGlobal);
 
   useEffect(() => {
+    requestFileSystemPermission();
     getSongs();
+    TrackPlayer.setupPlayer();
   }, []);
-
-  console.log(JSON.stringify(audioFiles));
-
   return (
     <>
       <Image
@@ -132,11 +102,14 @@ const Musics = ({navigation}) => {
 
           <ScrollView>
             {audioFiles &&
-              audioFiles.map(audio => {
+              audioFiles.map((audio, index) => {
                 return (
                   <Pressable
+                    key={audio.id}
                     style={styles.infoMusic}
-                    onPress={() => navigation.navigate('Player')}>
+                    onPress={() =>
+                      navigation.navigate('Player', {id: audio.id})
+                    }>
                     <Image
                       style={{width: 80, height: 80}}
                       source={require('./images/img1.png')}
@@ -144,7 +117,7 @@ const Musics = ({navigation}) => {
 
                     <View style={styles.MusicText}>
                       <Text style={[styles.MusicText1, {color: 'white'}]}>
-                        {audio.name}
+                        {audio.title}
                       </Text>
                       <Text
                         style={[
